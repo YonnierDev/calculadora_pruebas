@@ -1,0 +1,17 @@
+{
+  "name": "pruebas_unitarias",
+  "version": "1.0.0",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Calculadora con pruebas unitarias",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
