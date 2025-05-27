@@ -1,41 +1,49 @@
-const CalculatorController = require('./controllers/CalculatorController');
-const ConsoleView = require('./views/ConsoleView');
+const CalculadoraControlador = require('./controladores/CalculadoraControlador');
+const CalculadoraVista = require('./vistas/CalculadoraVista');
 
-class App {
-    constructor() {
-        this.controller = new CalculatorController();
-        this.view = new ConsoleView();
-    }
+const readline = require('readline');
 
-    async start() {
-        try {
-            console.log('Bienvenido a la Calculadora');
-            console.log('Operaciones disponibles:');
-            console.log('\nEn español:');
-            console.log('suma');
-            console.log('resta');
-            console.log('multiplicacion');
-            console.log('division');
-            console.log('\nEn inglés:');
-            console.log('add');
-            console.log('subtract');
-            console.log('multiply');
-            console.log('divide');
-            console.log('\nNota: Solo se aceptan números enteros positivos');
-            
-            const operation = await this.view.getUserInput('\nIngrese el nombre de la operación: ');
-            const num1 = await this.view.getUserInput('Ingrese el primer número: ');
-            const num2 = await this.view.getUserInput('Ingrese el segundo número: ');
+const controlador = new CalculadoraControlador();
+const vista = new CalculadoraVista();
 
-            const result = this.controller.handleOperation(operation, num1, num2);
-            this.view.displayResult(result);
-        } catch (error) {
-            this.view.displayError(error);
-        } finally {
-            this.view.close();
-        }
-    }
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+function mostrarMenu() {
+    console.log('\nCalculadora en consola');
+    console.log('1. Sumar');
+    console.log('2. Restar');
+    console.log('3. Multiplicar');
+    console.log('4. Dividir');
 }
 
-const app = new App();
-app.start(); 
+function pedirOperacion() {
+    mostrarMenu();
+    rl.question('Elige una opción: ', (opcion) => {
+        let tipoOperacion;
+        switch(opcion) {
+            case '1': tipoOperacion = 'suma'; break;
+            case '2': tipoOperacion = 'resta'; break;
+            case '3': tipoOperacion = 'multiplicacion'; break;
+            case '4': tipoOperacion = 'division'; break;
+            default:
+                console.log('Opción no válida.');
+                return pedirOperacion();
+        }
+        rl.question('Introduce el primer número: ', (num1) => {
+            rl.question('Introduce el segundo número: ', (num2) => {
+                try {
+                    const resultado = controlador.operar(tipoOperacion, parseFloat(num1), parseFloat(num2));
+                    vista.mostrarResultado(resultado);
+                } catch (error) {
+                    vista.mostrarError(error.message);
+                }
+                pedirOperacion();
+            });
+        });
+    });
+}
+
+pedirOperacion(); 
